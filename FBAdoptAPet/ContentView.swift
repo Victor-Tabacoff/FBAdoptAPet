@@ -1,10 +1,20 @@
 import SwiftUI
 import Firebase
+import FirebaseAuth
 
 struct ContentView: View {
     @State private var email = ""
     @State private var password = ""
+    @State private var userIsLoggedIn = false
     var body: some View {
+        if userIsLoggedIn{
+            ListView()
+        } else{
+            content
+        }
+    }
+    
+    var content: some View{
         ZStack {
             Color.brown
             RoundedRectangle(cornerRadius: 30, style: .continuous)
@@ -18,13 +28,13 @@ struct ContentView: View {
                     .font(.system(size: 40, weight: .bold, design: .rounded))
                     .offset(x: -100, y:-100)
                 TextField("Email", text: $email)
-                    .foregroundColor(.white)
+                    .foregroundColor(.black)
                     .textFieldStyle(.roundedBorder)
                 SecureField("Password", text: $password)
-                    .foregroundColor(.white)
+                    .foregroundColor(.black)
                     .textFieldStyle(.roundedBorder)
                 Button{
-                    //code
+                    register()
                 }label: {
                     Text("Sign up")
                         .bold()
@@ -36,7 +46,7 @@ struct ContentView: View {
                 .padding(.top)
                 .offset(y: 100)
                 Button{
-                    //code
+                    login()
                 } label: {
                     Text("Already Have An Account? Login")
                         .bold()
@@ -46,8 +56,31 @@ struct ContentView: View {
                 .offset(y: 110)
             }
             .frame(width: 350)
+            .onAppear{
+                Auth.auth().addStateDidChangeListener {auth, user in
+                    if user != nil {
+                        userIsLoggedIn.toggle()
+                    }
+                }
+            }
         }
         .ignoresSafeArea()
+    }
+    
+    func login(){
+        Auth.auth().signIn(withEmail: email, password: password) {result, error in
+            if error != nil{
+                print(error!.localizedDescription)
+            }
+        }
+    }
+    
+    func register() {
+        Auth.auth().createUser(withEmail: email, password: password) { result, error in
+            if error != nil {
+                print(error!.localizedDescription)
+            }
+        }
     }
 }
 

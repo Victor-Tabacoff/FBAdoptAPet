@@ -10,13 +10,16 @@ import Firebase
 
 @main
 struct FBAdoptAPetApp: App {
+    @StateObject var dataManager = DataManager()
+    
     init() {
         FirebaseApp.configure()
     }
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ListView()
+                .environmentObject(DataManager())
         }
     }
 }
