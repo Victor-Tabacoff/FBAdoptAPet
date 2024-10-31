@@ -19,7 +19,7 @@ struct FBAdoptAPetApp: App {
     var body: some Scene {
         WindowGroup {
             ListView()
-                .environmentObject(DataManager())
+                .environmentObject(dataManager)
         }
     }
 }
